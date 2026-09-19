@@ -31,7 +31,6 @@ class DroidLensApp extends StatelessWidget {
   }
 }
 
-/// The Cyberpunk Sci-Fi Camera HUD Preview Screen
 class StreamHudPreviewScreen extends StatefulWidget {
   const StreamHudPreviewScreen({super.key});
 
@@ -41,7 +40,6 @@ class StreamHudPreviewScreen extends StatefulWidget {
 
 class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
     with TickerProviderStateMixin {
-  // State variables
   bool _isStreaming = true;
   bool _isFrontCamera = false;
   bool _isTorchOn = false;
@@ -51,8 +49,7 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
   String _resolution = '1080p';
   double _zoomLevel = 1.0;
   double _exposureVal = 0.0;
-  
-  // Telemetry metrics
+
   int _fps = 60;
   int _bitrateKbps = 14250;
   int _latencyMs = 18;
@@ -62,7 +59,6 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
   Duration _sessionDuration = const Duration(minutes: 18, seconds: 42);
   Timer? _telemetryTimer;
 
-  // Animations
   late AnimationController _pulseController;
   late AnimationController _radarController;
   late AnimationController _reticleController;
@@ -91,7 +87,6 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
       duration: const Duration(milliseconds: 600),
     )..repeat();
 
-    // Telemetry tick simulator
     _telemetryTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!mounted) return;
       setState(() {
@@ -157,22 +152,34 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
               ],
             ),
             const SizedBox(height: 16),
-            ...['4K (2160p 30FPS - 25 Mbps)', 'FHD (1080p 60FPS - 14 Mbps)', 'HD (720p 60FPS - 6 Mbps)', 'SD (480p 30FPS - 2 Mbps)'].map((opt) {
+            ...[
+              '4K (2160p 30FPS - 25 Mbps)',
+              'FHD (1080p 60FPS - 14 Mbps)',
+              'HD (720p 60FPS - 6 Mbps)',
+              'SD (480p 30FPS - 2 Mbps)'
+            ].map((opt) {
               final label = opt.split(' ')[0];
               final isSelected = _resolution.contains(label);
               return Container(
                 margin: const EdgeInsets.only(bottom: 8),
                 decoration: BoxDecoration(
-                  color: isSelected ? const Color(0xFF00F5FF).withOpacity(0.15) : Colors.black26,
+                  color: isSelected
+                      ? const Color(0xFF00F5FF).withOpacity(0.15)
+                      : Colors.black26,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isSelected ? const Color(0xFF00F5FF) : Colors.white10,
+                    color: isSelected
+                        ? const Color(0xFF00F5FF)
+                        : Colors.white10,
                   ),
                 ),
                 child: ListTile(
-                  title: Text(opt, style: const TextStyle(fontSize: 13, color: Colors.white)),
+                  title: Text(opt,
+                      style:
+                          const TextStyle(fontSize: 13, color: Colors.white)),
                   trailing: isSelected
-                      ? const Icon(Icons.check_circle_rounded, color: Color(0xFF00F5FF), size: 18)
+                      ? const Icon(Icons.check_circle_rounded,
+                          color: Color(0xFF00F5FF), size: 18)
                       : null,
                   onTap: () {
                     setState(() => _resolution = label);
@@ -193,7 +200,6 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // 1. Camera Feed Simulator (In production this is CameraPreview(controller))
           Positioned.fill(
             child: Container(
               decoration: const BoxDecoration(
@@ -212,8 +218,6 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
               ),
             ),
           ),
-
-          // 2. Sci-Fi HUD Reticle & Crosshair
           Center(
             child: AnimatedBuilder(
               animation: _reticleController,
@@ -228,8 +232,6 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
               },
             ),
           ),
-
-          // 3. Audio Waveform Spectrum (Active mic visualization)
           Positioned(
             left: 20,
             right: 20,
@@ -241,48 +243,64 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
                       animation: _waveController,
                       builder: (context, child) {
                         return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(28, (index) {
-                        final h = (math.sin(index * 0.4 + _waveController.value * 2 * math.pi + index * 0.35) * 12 + 14).abs();
-                        return Container(
-                          width: 3,
-                          height: h,
-                          margin: const EdgeInsets.symmetric(horizontal: 2.5),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                              colors: [Color(0xFF00F5FF), Color(0xFF9D00FF)],
-                            ),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(28, (index) {
+                            final h = (math.sin(index * 0.4 +
+                                        _waveController.value *
+                                            2 *
+                                            math.pi +
+                                        index * 0.35) *
+                                    12 +
+                                14)
+                                .abs();
+                            return Container(
+                              width: 3,
+                              height: h,
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 2.5),
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter,
+                                  colors: [
+                                    Color(0xFF00F5FF),
+                                    Color(0xFF9D00FF)
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            );
+                          }),
                         );
-                      });
                       },
                     ),
-                    )
                   )
                 : Center(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
                         color: Colors.red.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: Colors.redAccent.withOpacity(0.6)),
+                        border: Border.all(
+                            color: Colors.redAccent.withOpacity(0.6)),
                       ),
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.mic_off, color: Colors.redAccent, size: 14),
+                          Icon(Icons.mic_off,
+                              color: Colors.redAccent, size: 14),
                           SizedBox(width: 6),
-                          Text('AUDIO TRANSMISSION MUTED', style: TextStyle(fontSize: 10, color: Colors.redAccent, letterSpacing: 1.2)),
+                          Text('AUDIO TRANSMISSION MUTED',
+                              style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.redAccent,
+                                  letterSpacing: 1.2)),
                         ],
                       ),
                     ),
                   ),
           ),
-
-          // 4. Top Status Header (Security, Protocol, Live status)
           Positioned(
             top: MediaQuery.of(context).padding.top + 8,
             left: 16,
@@ -292,20 +310,25 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Live Indicator Pill
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
-                        color: _isStreaming ? const Color(0xFF00F5FF).withOpacity(0.12) : Colors.white10,
+                        color: _isStreaming
+                            ? const Color(0xFF00F5FF).withOpacity(0.12)
+                            : Colors.white10,
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: _isStreaming ? const Color(0xFF00F5FF) : Colors.grey,
+                          color: _isStreaming
+                              ? const Color(0xFF00F5FF)
+                              : Colors.grey,
                           width: 1.2,
                         ),
                         boxShadow: _isStreaming
                             ? [
                                 BoxShadow(
-                                  color: const Color(0xFF00F5FF).withOpacity(0.3),
+                                  color: const Color(0xFF00F5FF)
+                                      .withOpacity(0.3),
                                   blurRadius: 10,
                                   spreadRadius: 1,
                                 )
@@ -322,7 +345,9 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
                               height: 8,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: _isStreaming ? const Color(0xFF00F5FF) : Colors.grey,
+                                color: _isStreaming
+                                    ? const Color(0xFF00F5FF)
+                                    : Colors.grey,
                               ),
                             ),
                           ),
@@ -334,16 +359,17 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
                               fontSize: 11,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 1.5,
-                              color: _isStreaming ? const Color(0xFF00F5FF) : Colors.grey,
+                              color: _isStreaming
+                                  ? const Color(0xFF00F5FF)
+                                  : Colors.grey,
                             ),
                           ),
                         ],
                       ),
                     ),
-
-                    // Session Time Counter
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
                         color: Colors.black.withOpacity(0.6),
                         borderRadius: BorderRadius.circular(8),
@@ -351,7 +377,8 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.timer_outlined, size: 13, color: Colors.white70),
+                          const Icon(Icons.timer_outlined,
+                              size: 13, color: Colors.white70),
                           const SizedBox(width: 6),
                           Text(
                             _formatDuration(_sessionDuration),
@@ -366,10 +393,9 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
                         ],
                       ),
                     ),
-
-                    // Device Telemetry (Battery & Temp)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
                         color: Colors.black.withOpacity(0.6),
                         borderRadius: BorderRadius.circular(8),
@@ -378,9 +404,13 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
                       child: Row(
                         children: [
                           Icon(
-                            _batteryPct > 20 ? Icons.battery_charging_full_rounded : Icons.battery_alert_rounded,
+                            _batteryPct > 20
+                                ? Icons.battery_charging_full_rounded
+                                : Icons.battery_alert_rounded,
                             size: 14,
-                            color: _batteryPct > 20 ? const Color(0xFF00FF88) : Colors.redAccent,
+                            color: _batteryPct > 20
+                                ? const Color(0xFF00FF88)
+                                : Colors.redAccent,
                           ),
                           const SizedBox(width: 4),
                           Text(
@@ -398,33 +428,41 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
                   ],
                 ),
                 const SizedBox(height: 10),
-
-                // Secondary HUD Metrics Bar (Floating glass pill)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                   decoration: BoxDecoration(
                     color: const Color(0xFF090E17).withOpacity(0.75),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: const Color(0xFF00F5FF).withOpacity(0.2)),
+                    border: Border.all(
+                        color: const Color(0xFF00F5FF).withOpacity(0.2)),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _buildMetricItem('FPS', '$_fps', const Color(0xFF00F5FF)),
+                      _buildMetricItem(
+                          'FPS', '$_fps', const Color(0xFF00F5FF)),
                       _buildDivider(),
-                      _buildMetricItem('LATENCY', '$_latencyMs ms', _latencyMs < 25 ? const Color(0xFF00FF88) : Colors.orangeAccent),
+                      _buildMetricItem(
+                          'LATENCY',
+                          '$_latencyMs ms',
+                          _latencyMs < 25
+                              ? const Color(0xFF00FF88)
+                              : Colors.orangeAccent),
                       _buildDivider(),
-                      _buildMetricItem('BITRATE', '${(_bitrateKbps / 1000).toStringAsFixed(1)} Mb/s', Colors.white),
+                      _buildMetricItem(
+                          'BITRATE',
+                          '${(_bitrateKbps / 1000).toStringAsFixed(1)} Mb/s',
+                          Colors.white),
                       _buildDivider(),
-                      _buildMetricItem('SENT', '${_dataUsageMb} MB', const Color(0xFF9D00FF)),
+                      _buildMetricItem('SENT', '${_dataUsageMb} MB',
+                          const Color(0xFF9D00FF)),
                     ],
                   ),
                 ),
               ],
             ),
           ),
-
-          // 5. Left Vertical Quick Control Strip (HUD Style)
           Positioned(
             left: 16,
             top: MediaQuery.of(context).size.height * 0.32,
@@ -438,38 +476,46 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
               child: Column(
                 children: [
                   _buildHudIconButton(
-                    icon: _isTorchOn ? Icons.flash_on_rounded : Icons.flash_off_rounded,
+                    icon: _isTorchOn
+                        ? Icons.flash_on_rounded
+                        : Icons.flash_off_rounded,
                     isActive: _isTorchOn,
                     color: Colors.amberAccent,
-                    onTap: () => setState(() => _isTorchOn = !_isTorchOn),
+                    onTap: () =>
+                        setState(() => _isTorchOn = !_isTorchOn),
                   ),
                   const SizedBox(height: 12),
                   _buildHudIconButton(
                     icon: Icons.flip_camera_android_rounded,
                     isActive: false,
                     color: const Color(0xFF00F5FF),
-                    onTap: () => setState(() => _isFrontCamera = !_isFrontCamera),
+                    onTap: () => setState(
+                        () => _isFrontCamera = !_isFrontCamera),
                   ),
                   const SizedBox(height: 12),
                   _buildHudIconButton(
-                    icon: _isAFLocked ? Icons.filter_center_focus : Icons.center_focus_weak,
+                    icon: _isAFLocked
+                        ? Icons.filter_center_focus
+                        : Icons.center_focus_weak,
                     isActive: _isAFLocked,
                     color: const Color(0xFF00FF88),
-                    onTap: () => setState(() => _isAFLocked = !_isAFLocked),
+                    onTap: () =>
+                        setState(() => _isAFLocked = !_isAFLocked),
                   ),
                   const SizedBox(height: 12),
                   _buildHudIconButton(
-                    icon: _isLandscapeLocked ? Icons.screen_lock_landscape : Icons.screen_rotation,
+                    icon: _isLandscapeLocked
+                        ? Icons.screen_lock_landscape
+                        : Icons.screen_rotation,
                     isActive: _isLandscapeLocked,
                     color: const Color(0xFF9D00FF),
-                    onTap: () => setState(() => _isLandscapeLocked = !_isLandscapeLocked),
+                    onTap: () => setState(() =>
+                        _isLandscapeLocked = !_isLandscapeLocked),
                   ),
                 ],
               ),
             ),
           ),
-
-          // 6. Right Vertical Zoom Slider
           Positioned(
             right: 14,
             top: MediaQuery.of(context).size.height * 0.28,
@@ -484,8 +530,18 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
               ),
               child: Column(
                 children: [
-                  const Text('ZOOM', style: TextStyle(fontSize: 8, fontFamily: 'Courier', color: Colors.white54, letterSpacing: 1.2)),
-                  Text('${_zoomLevel.toStringAsFixed(1)}x', style: const TextStyle(fontSize: 10, fontFamily: 'Courier', color: Color(0xFF00F5FF), fontWeight: FontWeight.bold)),
+                  const Text('ZOOM',
+                      style: TextStyle(
+                          fontSize: 8,
+                          fontFamily: 'Courier',
+                          color: Colors.white54,
+                          letterSpacing: 1.2)),
+                  Text('${_zoomLevel.toStringAsFixed(1)}x',
+                      style: const TextStyle(
+                          fontSize: 10,
+                          fontFamily: 'Courier',
+                          color: Color(0xFF00F5FF),
+                          fontWeight: FontWeight.bold)),
                   Expanded(
                     child: RotatedBox(
                       quarterTurns: 3,
@@ -495,14 +551,17 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
                           activeTrackColor: const Color(0xFF00F5FF),
                           inactiveTrackColor: Colors.white12,
                           thumbColor: const Color(0xFF00F5FF),
-                          thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
-                          overlayColor: const Color(0xFF00F5FF).withOpacity(0.2),
+                          thumbShape: const RoundSliderThumbShape(
+                              enabledThumbRadius: 6),
+                          overlayColor:
+                              const Color(0xFF00F5FF).withOpacity(0.2),
                         ),
                         child: Slider(
                           value: _zoomLevel,
                           min: 1.0,
                           max: 5.0,
-                          onChanged: (v) => setState(() => _zoomLevel = v),
+                          onChanged: (v) =>
+                              setState(() => _zoomLevel = v),
                         ),
                       ),
                     ),
@@ -512,18 +571,18 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
               ),
             ),
           ),
-
-          // 7. Bottom Master Controls Dashboard
           Positioned(
             bottom: 24,
             left: 16,
             right: 16,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: const Color(0xFF080D1A).withOpacity(0.92),
                 borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: const Color(0xFF00F5FF).withOpacity(0.3)),
+                border: Border.all(
+                    color: const Color(0xFF00F5FF).withOpacity(0.3)),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.6),
@@ -535,19 +594,22 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Resolution Preset Selector Pill
                   GestureDetector(
                     onTap: _showQualityModal,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
                         color: const Color(0xFF131D31),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: const Color(0xFF00F5FF).withOpacity(0.4)),
+                        border: Border.all(
+                            color:
+                                const Color(0xFF00F5FF).withOpacity(0.4)),
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.hd_outlined, color: Color(0xFF00F5FF), size: 16),
+                          const Icon(Icons.hd_outlined,
+                              color: Color(0xFF00F5FF), size: 16),
                           const SizedBox(width: 6),
                           Text(
                             _resolution,
@@ -559,25 +621,27 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
                             ),
                           ),
                           const SizedBox(width: 4),
-                          const Icon(Icons.arrow_drop_down, color: Colors.white70, size: 16),
+                          const Icon(Icons.arrow_drop_down,
+                              color: Colors.white70, size: 16),
                         ],
                       ),
                     ),
                   ),
-
-                  // Mic Audio Mute / Unmute
                   IconButton(
                     icon: Icon(
                       _isMuted ? Icons.mic_off_rounded : Icons.mic_rounded,
-                      color: _isMuted ? Colors.redAccent : const Color(0xFF00F5FF),
+                      color: _isMuted
+                          ? Colors.redAccent
+                          : const Color(0xFF00F5FF),
                     ),
-                    onPressed: () => setState(() => _isMuted = !_isMuted),
+                    onPressed: () =>
+                        setState(() => _isMuted = !_isMuted),
                     style: IconButton.styleFrom(
-                      backgroundColor: _isMuted ? Colors.red.withOpacity(0.15) : const Color(0xFF131D31),
+                      backgroundColor: _isMuted
+                          ? Colors.red.withOpacity(0.15)
+                          : const Color(0xFF131D31),
                     ),
                   ),
-
-                  // Master Stream Toggle Button (Glowing Ring Sci-Fi Button)
                   GestureDetector(
                     onTap: () {
                       setState(() => _isStreaming = !_isStreaming);
@@ -589,28 +653,38 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
                         shape: BoxShape.circle,
                         gradient: LinearGradient(
                           colors: _isStreaming
-                              ? [const Color(0xFFFF2A6D), const Color(0xFF9D00FF)]
-                              : [const Color(0xFF00F5FF), const Color(0xFF0088FF)],
+                              ? [
+                                  const Color(0xFFFF2A6D),
+                                  const Color(0xFF9D00FF)
+                                ]
+                              : [
+                                  const Color(0xFF00F5FF),
+                                  const Color(0xFF0088FF)
+                                ],
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: (_isStreaming ? const Color(0xFFFF2A6D) : const Color(0xFF00F5FF)).withOpacity(0.45),
+                            color: (_isStreaming
+                                    ? const Color(0xFFFF2A6D)
+                                    : const Color(0xFF00F5FF))
+                                .withOpacity(0.45),
                             blurRadius: 18,
                             spreadRadius: 2,
                           )
                         ],
                       ),
                       child: Icon(
-                        _isStreaming ? Icons.stop_rounded : Icons.play_arrow_rounded,
+                        _isStreaming
+                            ? Icons.stop_rounded
+                            : Icons.play_arrow_rounded,
                         color: Colors.white,
                         size: 30,
                       ),
                     ),
                   ),
-
-                  // Connection Info / IP Binding
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 8),
                     decoration: BoxDecoration(
                       color: const Color(0xFF131D31),
                       borderRadius: BorderRadius.circular(12),
@@ -619,8 +693,17 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('PC HOST', style: TextStyle(fontSize: 8, color: Colors.white54, fontFamily: 'Courier')),
-                        Text('192.168.1.150:8276', style: TextStyle(fontSize: 10, color: Color(0xFF00F5FF), fontWeight: FontWeight.bold, fontFamily: 'Courier')),
+                        Text('PC HOST',
+                            style: TextStyle(
+                                fontSize: 8,
+                                color: Colors.white54,
+                                fontFamily: 'Courier')),
+                        Text('192.168.1.150:8276',
+                            style: TextStyle(
+                                fontSize: 10,
+                                color: Color(0xFF00F5FF),
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Courier')),
                       ],
                     ),
                   ),
@@ -633,31 +716,31 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
     );
   }
 
- Widget _buildMetricItem(String label, String value, Color color) {
-  return Column(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Text(
-        label,
-        style: const TextStyle(
-          fontSize: 8,
-          fontFamily: 'Courier',
-          color: Colors.white54,
+  Widget _buildMetricItem(String label, String value, Color color) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 8,
+            fontFamily: 'Courier',
+            color: Colors.white54,
+          ),
         ),
-      ),
-      const SizedBox(height: 2),
-      Text(
-        value,
-        style: TextStyle(
-          fontSize: 12,
-          fontFamily: 'Courier',
-          color: color,
-          fontWeight: FontWeight.bold,
+        const SizedBox(height: 2),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 12,
+            fontFamily: 'Courier',
+            color: color,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
   Widget _buildDivider() {
     return Container(
@@ -696,7 +779,6 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
   }
 }
 
-/// Custom Background Grid for Cyber-HUD Feel
 class GridBackgroundPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
@@ -717,7 +799,6 @@ class GridBackgroundPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-/// Cyberpunk Reticle and Target Frame Overlay
 class HudReticlePainter extends CustomPainter {
   final double angle;
   final bool isLocked;
@@ -727,7 +808,8 @@ class HudReticlePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    final primaryColor = isLocked ? const Color(0xFF00F5FF) : Colors.amberAccent;
+    final primaryColor =
+        isLocked ? const Color(0xFF00F5FF) : Colors.amberAccent;
 
     final paintArc = Paint()
       ..color = primaryColor.withOpacity(0.4)
@@ -739,31 +821,36 @@ class HudReticlePainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.5;
 
-    // Corner brackets
-    const bracketLen = 22.0;
-    const pad = 12.0;
     final bPaint = Paint()
       ..color = primaryColor.withOpacity(0.7)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 
-    // Top-Left
-    canvas.drawLine(const Offset(pad, pad + bracketLen), const Offset(pad, pad), bPaint);
-    canvas.drawLine(const Offset(pad, pad), const Offset(pad + bracketLen, pad), bPaint);
+    const bracketLen = 22.0;
+    const pad = 12.0;
 
-    // Top-Right
-    canvas.drawLine(Offset(size.width - pad - bracketLen, pad), Offset(size.width - pad, pad), bPaint);
-    canvas.drawLine(Offset(size.width - pad, pad), Offset(size.width - pad, pad + bracketLen), bPaint);
+    canvas.drawLine(const Offset(pad, pad + bracketLen),
+        const Offset(pad, pad), bPaint);
+    canvas.drawLine(const Offset(pad, pad),
+        const Offset(pad + bracketLen, pad), bPaint);
 
-    // Bottom-Left
-    canvas.drawLine(Offset(pad, size.height - pad - bracketLen), Offset(pad, size.height - pad), bPaint);
-    canvas.drawLine(Offset(pad, size.height - pad), Offset(pad + bracketLen, size.height - pad), bPaint);
+    canvas.drawLine(Offset(size.width - pad - bracketLen, pad),
+        Offset(size.width - pad, pad), bPaint);
+    canvas.drawLine(Offset(size.width - pad, pad),
+        Offset(size.width - pad, pad + bracketLen), bPaint);
 
-    // Bottom-Right
-    canvas.drawLine(Offset(size.width - pad - bracketLen, size.height - pad), Offset(size.width - pad, size.height - pad), bPaint);
-    canvas.drawLine(Offset(size.width - pad, size.height - pad - bracketLen), Offset(size.width - pad, size.height - pad), bPaint);
+    canvas.drawLine(Offset(pad, size.height - pad - bracketLen),
+        Offset(pad, size.height - pad), bPaint);
+    canvas.drawLine(Offset(pad, size.height - pad),
+        Offset(pad + bracketLen, size.height - pad), bPaint);
 
-    // Center Rotating Reticle Arc
+    canvas.drawLine(
+        Offset(size.width - pad - bracketLen, size.height - pad),
+        Offset(size.width - pad, size.height - pad),
+        bPaint);
+    canvas.drawLine(Offset(size.width - pad, size.height - pad - bracketLen),
+        Offset(size.width - pad, size.height - pad), bPaint);
+
     canvas.save();
     canvas.translate(center.dx, center.dy);
     canvas.rotate(angle);
@@ -783,12 +870,9 @@ class HudReticlePainter extends CustomPainter {
       paintAccent,
     );
 
-    // Outer subtle guide circle
     canvas.drawCircle(Offset.zero, 60, paintArc);
-
     canvas.restore();
 
-    // Center Crosshair Dot
     final dotPaint = Paint()..color = primaryColor;
     canvas.drawCircle(center, 2.5, dotPaint);
   }
