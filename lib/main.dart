@@ -633,32 +633,31 @@ class _StreamHudPreviewScreenState extends State<StreamHudPreviewScreen>
     );
   }
 
-  Widget _buildMetricItem(String label, String value, Color color) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 8,
-            fontFamily: 'Courier',
-            color: Colors.white54,
-            letterSpacing: 1.1,
-          ),
+ Widget _buildMetricItem(String label, String value, Color color) {
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Text(
+        label,
+        style: const TextStyle(
+          fontSize: 8,
+          fontFamily: 'Courier',
+          color: Colors.white54,
         ),
-        const SizedBox(height: 2),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 11,
-            fontFamily: 'Courier',
-            fontWeight: FontWeight.w900,
-            color: color,
-          ),
+      ),
+      const SizedBox(height: 2),
+      Text(
+        value,
+        style: TextStyle(
+          fontSize: 12,
+          fontFamily: 'Courier',
+          color: color,
+          fontWeight: FontWeight.bold,
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
 
   Widget _buildDivider() {
     return Container(
